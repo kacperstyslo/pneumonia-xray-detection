@@ -13,12 +13,12 @@ from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
-
+from tensorflow.keras.optimizers import Adam
 from sklearn.utils import resample
 
 MODEL_VERSION: str = "0_0_1"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.h5"
-FORCE_RETRAINING: bool = False
+FORCE_RETRAINING: bool = True
 
 df: pd.DataFrame = pd.DataFrame(glob("data/chest_xray" + "/*/*/*.jpeg"), columns=["PATH"])
 df["LABEL"] = df["PATH"].apply(lambda path_: path_.split("\\")[2].strip())
@@ -100,11 +100,12 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
             Dense(1, activation="sigmoid"),
         ]
     )
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    optimizer = Adam(learning_rate=0.0001)
+    model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
     model.summary()
 
     # Train model.
-    history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1)
+    history = model.fit(train_generator, epochs=20, validation_data=valid_generator, verbose=1)
 
     plt.plot(history.history["accuracy"], label="Training Accuracy")
     plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
