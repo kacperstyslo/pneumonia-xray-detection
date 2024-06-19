@@ -149,8 +149,8 @@ heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=test_generator.class_
 plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.title('Confusion Matrix')
-plt.show()
 plt.savefig("training_assets/confusion_matrix.png")
+plt.show()
 
 
 def plot_final_test_results(test_generator, model, num_images=10) -> None:
@@ -165,8 +165,8 @@ def plot_final_test_results(test_generator, model, num_images=10) -> None:
         plt.imshow(X_test[i])
         plt.title(f"Labeled: {y_test[i]}, Predicted: {y_pred_labels[i][0]}")
         plt.axis("off")
-    plt.show()
     plt.savefig("training_assets/final_test_results.png")
+    plt.show()
 
 
 plot_final_test_results(test_generator, model, num_images=10)
