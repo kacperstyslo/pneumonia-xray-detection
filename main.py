@@ -105,7 +105,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     model.summary()
 
     # Train model.
-    history = model.fit(train_generator, epochs=20, validation_data=valid_generator, verbose=1)
+    history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1)
 
     plt.plot(history.history["accuracy"], label="Training Accuracy")
     plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
