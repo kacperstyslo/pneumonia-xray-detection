@@ -17,7 +17,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.utils import resample
 
 MODEL_VERSION: str = "0_0_1"
-MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.h5"
+MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = False
 
 df: pd.DataFrame = pd.DataFrame(glob("data/chest_xray" + "/*/*/*.jpeg"), columns=["PATH"])
