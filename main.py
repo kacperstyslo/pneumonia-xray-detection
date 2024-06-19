@@ -85,7 +85,7 @@ test_generator = test_datagen.flow_from_dataframe(
 )
 
 if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
-    # Build model.
+    # Build the model.
     model: Sequential = Sequential(
         [
             Conv2D(32, (3, 3), activation="relu", input_shape=(150, 150, 3)),
@@ -104,7 +104,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
     model.summary()
 
-    # Train model.
+    # Train the model.
     history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1)
 
     plt.plot(history.history["accuracy"], label="Training Accuracy")
@@ -141,7 +141,6 @@ y_pred = np.round(Y_pred).astype(int)
 
 y_true = test_generator.classes
 
-# Classification Report
 print(
     f"Classification report:\n{classification_report(y_true, y_pred, target_names=test_generator.class_indices.keys())}"
 )
