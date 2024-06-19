@@ -143,10 +143,10 @@ y_true = test_generator.classes
 
 # Classification Report
 print(
-    f"Classification report:{classification_report(y_true, y_pred, target_names=test_generator.class_indices.keys())}"
+    f"Classification report:\n{classification_report(y_true, y_pred, target_names=test_generator.class_indices.keys())}"
 )
 cm = confusion_matrix(y_true, y_pred)
-print(f"Confusion Matrix: {cm}")
+print(f"Confusion Matrix: \n{cm}")
 
 plt.figure(figsize=(10, 7))
 heatmap(
