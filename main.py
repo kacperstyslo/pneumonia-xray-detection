@@ -112,6 +112,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
     plt.legend()
+    plt.savefig("training_assets/training_val_accuracy.png")
     plt.show()
 
     plt.plot(history.history["loss"], label="Training Loss")
@@ -120,6 +121,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.legend()
+    plt.savefig("training_assets/training_val_loss.png")
     plt.show()
 
     model.save(MODEL_PATH)
@@ -139,16 +141,24 @@ y_pred = np.round(Y_pred).astype(int)
 y_true = test_generator.classes
 
 # Classification Report
-print(f"Classification report:{classification_report(y_true, y_pred, target_names=test_generator.class_indices.keys())}")
+print(
+    f"Classification report:{classification_report(y_true, y_pred, target_names=test_generator.class_indices.keys())}"
+)
 cm = confusion_matrix(y_true, y_pred)
 print(f"Confusion Matrix: {cm}")
 
 plt.figure(figsize=(10, 7))
-heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=test_generator.class_indices.keys(),
-            yticklabels=test_generator.class_indices.keys())
-plt.xlabel('Predicted')
-plt.ylabel('True')
-plt.title('Confusion Matrix')
+heatmap(
+    cm,
+    annot=True,
+    fmt="d",
+    cmap="Blues",
+    xticklabels=test_generator.class_indices.keys(),
+    yticklabels=test_generator.class_indices.keys(),
+)
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.title("Confusion Matrix")
 plt.savefig("training_assets/confusion_matrix.png")
 plt.show()
 
