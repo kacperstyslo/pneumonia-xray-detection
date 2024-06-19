@@ -18,7 +18,7 @@ from sklearn.utils import resample
 
 MODEL_VERSION: str = "0_0_1"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.h5"
-FORCE_RETRAINING: bool = True
+FORCE_RETRAINING: bool = False
 
 df: pd.DataFrame = pd.DataFrame(glob("data/chest_xray" + "/*/*/*.jpeg"), columns=["PATH"])
 df["LABEL"] = df["PATH"].apply(lambda path_: path_.split("\\")[2].strip())
@@ -100,7 +100,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
             Dense(1, activation="sigmoid"),
         ]
     )
-    optimizer = Adam(learning_rate=0.0001)
+    optimizer = Adam(learning_rate=0.001)
     model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
     model.summary()
 
