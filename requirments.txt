@@ -6,8 +6,9 @@ numpy==2.0.0
 
 # Packages required for model training.
 keras==3.3.3
-scikit-learn==1.5.0
 matplotlib==3.9.0
+scikit-learn==1.5.0
+tensorflow==2.16.1
 
 # Packages required for the code quality maintenance.
 mypy==1.10.0
