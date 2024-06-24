@@ -128,6 +128,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     model.save(MODEL_PATH)
 else:
     model = models.load_model(MODEL_PATH)
+    model.summary()
 
 # Validate model accuracy.
 test_loss, test_accuracy = model.evaluate(test_generator)
@@ -169,7 +170,7 @@ def plot_final_test_results(test_generator, model, num_images=10) -> None:
     y_pred = model.predict(X_test)
     y_pred_labels = np.round(y_pred).astype(int)
 
-    plt.figure(figsize=(20, 10))
+    plt.figure(figsize=(num_images * 2, num_images))
     for i in range(num_images):
         ax = plt.subplot(2, num_images // 2, i + 1)
         plt.imshow(X_test[i])
