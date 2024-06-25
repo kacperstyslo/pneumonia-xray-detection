@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from os import path
 from glob import glob
+from sys import argv
 
 import numpy as np
 import pandas as pd
@@ -13,12 +14,12 @@ from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
-from tensorflow.keras.optimizers import Adam
 from sklearn.utils import resample
 
-MODEL_VERSION: str = "0_0_1"
+
+MODEL_VERSION: str = "0_0_2"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
-FORCE_RETRAINING: bool = False
+FORCE_RETRAINING: bool = '--train' in argv
 
 df: pd.DataFrame = pd.DataFrame(glob("data/chest_xray" + "/*/*/*.jpeg"), columns=["PATH"])
 df["LABEL"] = df["PATH"].apply(lambda path_: path_.split("\\")[2].strip())
@@ -59,6 +60,13 @@ train_generator = train_datagen.flow_from_dataframe(
     batch_size=32,
     class_mode="binary",
     color_mode="rgb",
+    # rotation_range=40,
+    # width_shift_range=0.2,
+    # height_shift_range=0.2,
+    # shear_range=0.2,
+    # zoom_range=0.2,
+    # horizontal_flip=True,
+    # fill_mode='nearest',
     shuffle=True,
 )
 
@@ -100,8 +108,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
             Dense(1, activation="sigmoid"),
         ]
     )
-    optimizer = Adam(learning_rate=0.001)
-    model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
     model.summary()
 
     # Train the model.
