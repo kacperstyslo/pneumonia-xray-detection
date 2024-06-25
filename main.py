@@ -1,5 +1,6 @@
 """Pneumonia Xray detection - 0.0.1"""
 
+from datetime import datetime
 from dataclasses import dataclass
 from os import path
 from glob import glob
@@ -8,6 +9,7 @@ from sys import argv
 import numpy as np
 import pandas as pd
 from seaborn import heatmap
+from keras.callbacks import TensorBoard
 from keras import Sequential, models
 from keras.src.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
@@ -17,7 +19,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import resample
 
 
-MODEL_VERSION: str = "0_0_2"
+MODEL_VERSION: str = "0_0_3"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = '--train' in argv
 
@@ -112,7 +114,8 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     model.summary()
 
     # Train the model.
-    history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1)
+    tensorboard = TensorBoard(log_dir=f"logs/{datetime.now().strftime('%Y%m%d-%H%M%S')}", histogram_freq=1)
+    history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1, callbacks=[tensorboard])
 
     plt.plot(history.history["accuracy"], label="Training Accuracy")
     plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
