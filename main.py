@@ -53,12 +53,14 @@ print(f"Testing set shapes: {df_test.shape}")
 train_datagen = ImageDataGenerator(rescale=1.0 / 255)
 test_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
+target_size = (150, 150)
+
 # Create generators which will load train, valid and test xray images.
 train_generator = train_datagen.flow_from_dataframe(
     dataframe=df_train,
     x_col="PATH",
     y_col="LABEL",
-    target_size=(150, 150),
+    target_size=target_size,
     batch_size=32,
     class_mode="binary",
     color_mode="rgb",
@@ -72,24 +74,24 @@ train_generator = train_datagen.flow_from_dataframe(
     shuffle=True,
 )
 
-valid_generator = test_datagen.flow_from_dataframe(
-    dataframe=df_valid,
-    x_col="PATH",
-    y_col="LABEL",
-    target_size=(150, 150),
-    batch_size=32,
-    color_mode="rgb",
-    class_mode="binary",
-    shuffle=False,
-)
-
 test_generator = test_datagen.flow_from_dataframe(
     dataframe=df_test,
     x_col="PATH",
     y_col="LABEL",
-    target_size=(150, 150),
+    target_size=target_size,
     color_mode="rgb",
     batch_size=64,
+    class_mode="binary",
+    shuffle=False,
+)
+
+valid_generator = test_datagen.flow_from_dataframe(
+    dataframe=df_valid,
+    x_col="PATH",
+    y_col="LABEL",
+    target_size=target_size,
+    batch_size=32,
+    color_mode="rgb",
     class_mode="binary",
     shuffle=False,
 )
@@ -98,15 +100,20 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     # Build the model.
     model: Sequential = Sequential(
         [
-            Conv2D(32, (3, 3), activation="relu", input_shape=(150, 150, 3)),
+            # First convolutional layer with reducing layer.
+            Conv2D(32, (3, 3), activation="relu", input_shape=(target_size[0], target_size[1], 3)),
             MaxPooling2D((2, 2)),
+            # Second convolutional layer with reducing layer.
             Conv2D(64, (3, 3), activation="relu"),
             MaxPooling2D((2, 2)),
+            # Third convolutional layer with reducing layer.
             Conv2D(128, (3, 3), activation="relu"),
             MaxPooling2D((2, 2)),
+            # First hidden layer.
             Flatten(),
             Dense(128, activation="relu"),
             Dropout(0.5),
+            # Output hidden layer.
             Dense(1, activation="sigmoid"),
         ]
     )
