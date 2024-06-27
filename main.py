@@ -121,7 +121,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     model.summary()
 
     # Train the model.
-    tensorboard = TensorBoard(log_dir=f"logs/{datetime.now().strftime('%Y%m%d-%H%M%S')}", histogram_freq=1)
+    tensorboard = TensorBoard(log_dir=f"logs/{datetime.now().strftime('%Y-%m-%d %H-%M')}", histogram_freq=1)
     history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1, callbacks=[tensorboard])
 
     plt.plot(history.history["accuracy"], label="Training Accuracy")
