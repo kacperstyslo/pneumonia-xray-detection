@@ -1,4 +1,4 @@
-"""Pneumonia Xray detection - 0.0.1"""
+"""Pneumonia Xray detection - 0.0.2"""
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -19,7 +19,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import resample
 
 
-MODEL_VERSION: str = "0_0_3"
+MODEL_VERSION: str = "0_0_2"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = '--train' in argv
 
@@ -46,8 +46,8 @@ df_shuffled: pd.DataFrame = df_balanced.sample(frac=1.0, random_state=42)
 df_train, df_temp = train_test_split(df_shuffled, test_size=0.2, random_state=42)
 df_test, df_valid = train_test_split(df_temp, test_size=0.5, random_state=42)
 print(f"Training set shapes: {df_train.shape}")
-print(f"Validation set shapes: {df_valid.shape}")
 print(f"Testing set shapes: {df_test.shape}")
+print(f"Validation set shapes: {df_valid.shape}")
 
 # Transform pixels values from 0-255 to 0-1.
 train_datagen = ImageDataGenerator(rescale=1.0 / 255)
