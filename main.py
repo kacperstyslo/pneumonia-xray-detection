@@ -1,4 +1,4 @@
-"""Pneumonia Xray detection - 0.0.2"""
+"""Pneumonia Xray detection - 0.0.3"""
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -19,7 +19,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import resample
 
 
-MODEL_VERSION: str = "0_0_2"
+MODEL_VERSION: str = "0_0_3"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = '--train' in argv
 
@@ -64,13 +64,7 @@ train_generator = train_datagen.flow_from_dataframe(
     batch_size=32,
     class_mode="binary",
     color_mode="rgb",
-    # rotation_range=40,
-    # width_shift_range=0.2,
-    # height_shift_range=0.2,
-    # shear_range=0.2,
-    # zoom_range=0.2,
-    # horizontal_flip=True,
-    # fill_mode='nearest',
+    horizontal_flip=True,
     shuffle=True,
 )
 
@@ -109,9 +103,18 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
             # Third convolutional layer with reducing layer.
             Conv2D(128, (3, 3), activation="relu"),
             MaxPooling2D((2, 2)),
+            # Fourth convolutional layer with reducing layer.
+            Conv2D(256, (3, 3), activation="relu"),
+            MaxPooling2D((2, 2)),
             # First hidden layer.
             Flatten(),
+            Dense(64, activation="relu"),
+            Dropout(0.5),
+            # Second hidden layer.
             Dense(128, activation="relu"),
+            Dropout(0.5),
+            # Third hidden layer.
+            Dense(256, activation="relu"),
             Dropout(0.5),
             # Output hidden layer.
             Dense(1, activation="sigmoid"),
