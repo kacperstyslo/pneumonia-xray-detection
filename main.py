@@ -1,4 +1,4 @@
-"""Pneumonia Xray detection - 0.0.3"""
+"""Pneumonia Xray detection - 0.0.2"""
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -19,7 +19,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import resample
 
 
-MODEL_VERSION: str = "0_0_3"
+MODEL_VERSION: str = "0_0_2"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = '--train' in argv
 
