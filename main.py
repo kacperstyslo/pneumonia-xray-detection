@@ -105,14 +105,13 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
             # Transform 2D feature maps into 1D vector.
             Flatten(),
 
-            # Fully connected deep layers process extracted features.
+            # Fully connected deep layers process extracted features to detect abstract patterns.
             Dense(64, activation="relu"),
             Dropout(0.5),  # Drop randomly 50% of neurons to prevent overfitting.
             Dense(128, activation="relu"),
             Dropout(0.5),
             Dense(256, activation="relu"),
             Dropout(0.5),
-
 
             # Output layer in form of binary classification (0 or 1).
             Dense(1, activation="sigmoid"),
