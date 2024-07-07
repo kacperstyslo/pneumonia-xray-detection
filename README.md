@@ -1,4 +1,4 @@
-# pneunomia-xray-detection
+# pneumonia-xray-detection
 
 #### Model architecture.
 Model architecture implements several key concepts in deep learning:
