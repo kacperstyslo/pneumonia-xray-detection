@@ -41,7 +41,7 @@ df_pneumonia_balanced: pd.DataFrame = resample(df_pneumonia, replace=False, n_sa
 df_balanced: pd.DataFrame = pd.concat([df_normal, df_pneumonia_balanced])
 df_balanced["LABEL"] = np.where(df_balanced["LABEL"] == Labels.PNEUMONIA, "1", "0")
 
-# Split the data into train, test, and validation sets.
+# Split the data into train (80%), test (10%), and validation (10%) sets.
 df_shuffled: pd.DataFrame = df_balanced.sample(frac=1.0, random_state=42)
 df_train, df_temp = train_test_split(df_shuffled, test_size=0.2, random_state=42)
 df_test, df_valid = train_test_split(df_temp, test_size=0.5, random_state=42)
@@ -49,12 +49,13 @@ print(f"Training set shapes: {df_train.shape}")
 print(f"Testing set shapes: {df_test.shape}")
 print(f"Validation set shapes: {df_valid.shape}")
 
-# Transform pixels values from 0-255 to 0-1.
+# Normalize pixel values from 0-255 to 0-1.
 train_datagen = ImageDataGenerator(rescale=1.0 / 255)
 test_datagen = ImageDataGenerator(rescale=1.0 / 255)
+# Resize image to 150x150 pixels.
 target_size = (150, 150)
 
-# Create generators which will load train, valid and test xray images.
+# Create generators which will be used to load and process xray images in real-time during training.
 train_generator = train_datagen.flow_from_dataframe(
     dataframe=df_train,
     x_col="PATH",
@@ -91,29 +92,29 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     # Build the model architecture.
     model: Sequential = Sequential(
         [
-            # First convolutional layer with reducing layer.
+            # Convolutional layers extract features from simple to complex (edges, textures to more complex patterns).
             Conv2D(32, (3, 3), activation="relu", input_shape=(target_size[0], target_size[1], 3)),
-            MaxPooling2D((2, 2)),
-            # Second convolutional layer with reducing layer.
+            MaxPooling2D((2, 2)),  # Reduce spatial dimensions.
             Conv2D(64, (3, 3), activation="relu"),
             MaxPooling2D((2, 2)),
-            # Third convolutional layer with reducing layer.
             Conv2D(128, (3, 3), activation="relu"),
             MaxPooling2D((2, 2)),
-            # Fourth convolutional layer with reducing layer.
             Conv2D(256, (3, 3), activation="relu"),
             MaxPooling2D((2, 2)),
-            # First hidden layer.
+
+            # Transform 2D feature maps into 1D vector.
             Flatten(),
+
+            # Fully connected deep layers process extracted features.
             Dense(64, activation="relu"),
-            Dropout(0.5),
-            # Second hidden layer.
+            Dropout(0.5),  # Drop randomly 50% of neurons to prevent overfitting.
             Dense(128, activation="relu"),
             Dropout(0.5),
-            # Third hidden layer.
             Dense(256, activation="relu"),
             Dropout(0.5),
-            # Output hidden layer.
+
+
+            # Output layer in form of binary classification (0 or 1).
             Dense(1, activation="sigmoid"),
         ]
     )
