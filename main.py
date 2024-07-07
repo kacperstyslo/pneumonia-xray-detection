@@ -18,11 +18,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import resample
 
-
+# Constants.
 MODEL_VERSION: str = "0_0_2"
 MODEL_PATH: str = f"trained_model_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = '--train' in argv
 
+# Load and preprocess the data.
 df: pd.DataFrame = pd.DataFrame(glob("data/chest_xray" + "/*/*/*.jpeg"), columns=["PATH"])
 df["LABEL"] = df["PATH"].apply(lambda path_: path_.split("\\")[2].strip())
 
@@ -33,16 +34,15 @@ class Labels:
     PNEUMONIA: str = "PNEUMONIA"
 
 
+# Balance dataset.
 df_normal: pd.DataFrame = df[df["LABEL"] == Labels.NORMAL]
 df_pneumonia: pd.DataFrame = df[df["LABEL"] == Labels.PNEUMONIA]
-
 df_pneumonia_balanced: pd.DataFrame = resample(df_pneumonia, replace=False, n_samples=len(df_normal), random_state=42)
-
 df_balanced: pd.DataFrame = pd.concat([df_normal, df_pneumonia_balanced])
 df_balanced["LABEL"] = np.where(df_balanced["LABEL"] == Labels.PNEUMONIA, "1", "0")
 
+# Split the data into train, test, and validation sets.
 df_shuffled: pd.DataFrame = df_balanced.sample(frac=1.0, random_state=42)
-
 df_train, df_temp = train_test_split(df_shuffled, test_size=0.2, random_state=42)
 df_test, df_valid = train_test_split(df_temp, test_size=0.5, random_state=42)
 print(f"Training set shapes: {df_train.shape}")
@@ -52,7 +52,6 @@ print(f"Validation set shapes: {df_valid.shape}")
 # Transform pixels values from 0-255 to 0-1.
 train_datagen = ImageDataGenerator(rescale=1.0 / 255)
 test_datagen = ImageDataGenerator(rescale=1.0 / 255)
-
 target_size = (150, 150)
 
 # Create generators which will load train, valid and test xray images.
@@ -67,7 +66,6 @@ train_generator = train_datagen.flow_from_dataframe(
     horizontal_flip=True,
     shuffle=True,
 )
-
 test_generator = test_datagen.flow_from_dataframe(
     dataframe=df_test,
     x_col="PATH",
@@ -78,7 +76,6 @@ test_generator = test_datagen.flow_from_dataframe(
     class_mode="binary",
     shuffle=False,
 )
-
 valid_generator = test_datagen.flow_from_dataframe(
     dataframe=df_valid,
     x_col="PATH",
@@ -91,7 +88,7 @@ valid_generator = test_datagen.flow_from_dataframe(
 )
 
 if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
-    # Build the model.
+    # Build the model architecture.
     model: Sequential = Sequential(
         [
             # First convolutional layer with reducing layer.
@@ -127,6 +124,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     tensorboard = TensorBoard(log_dir=f"logs/{datetime.now().strftime('%Y-%m-%d %H-%M')}", histogram_freq=1)
     history = model.fit(train_generator, epochs=10, validation_data=valid_generator, verbose=1, callbacks=[tensorboard])
 
+    # Plot training and validation accuracy.
     plt.plot(history.history["accuracy"], label="Training Accuracy")
     plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
     plt.title("Training and Validation Accuracy")
@@ -135,7 +133,7 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     plt.legend()
     plt.savefig("training_assets/training_val_accuracy.png")
     plt.show()
-
+    # Plot training and validation loss.
     plt.plot(history.history["loss"], label="Training Loss")
     plt.plot(history.history["val_loss"], label="Validation Loss")
     plt.title("Training and Validation Loss")
@@ -145,21 +143,21 @@ if not path.exists(MODEL_PATH) or FORCE_RETRAINING:
     plt.savefig("training_assets/training_val_loss.png")
     plt.show()
 
+    # Saved the trained model.
     model.save(MODEL_PATH)
 else:
     model = models.load_model(MODEL_PATH)
     model.summary()
 
-# Validate model accuracy.
+# Validate model accuracy on test set.
 test_loss, test_accuracy = model.evaluate(test_generator)
 print(f"Test Accuracy: {test_accuracy:.4f}")
 print(f"Test Loss: {test_loss:.4f}")
 
-# Execute final test.
+# Make predictions on the test set.
 test_generator.reset()
 Y_pred = model.predict(test_generator)
 y_pred = np.round(Y_pred).astype(int)
-
 y_true = test_generator.classes
 
 print(
