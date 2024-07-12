@@ -9,8 +9,7 @@ Model architecture implements several key concepts in deep learning:
   to pneumonia.
 
 * Hierarchical Learning: As data flows through the network, each layer learns to recognize 
-  increasingly complex and abstract patterns. This hierarchical learning is a key strength 
-  of deep learning.
+  increasingly complex and abstract patterns.
 
 * Non-linearity: The ReLU activation functions introduce non-linearity, allowing the network 
   to learn complex, non-linear relationships in the data.
