@@ -22,7 +22,7 @@ from sklearn.utils import resample
 tf.random.set_seed(42)
 
 # Constants.
-MODEL_VERSION: str = "1_0_1"
+MODEL_VERSION: str = "1_0_0"
 MODEL_PATH: str = f"models/pneumonia_xray_detector_{MODEL_VERSION}.keras"
 FORCE_RETRAINING: bool = "--train" in argv
 EPOCHS: int = 20
