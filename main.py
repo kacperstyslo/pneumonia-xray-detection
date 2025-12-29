@@ -1,4 +1,4 @@
-"""Pneumonia Xray detection - 1.0.0"""
+"""Pneumonia Xray detection using deep learning - 1.0.0"""
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -37,7 +37,7 @@ class Labels:
 
 def load_dataset() -> pd.DataFrame:
     df: pd.DataFrame = pd.DataFrame(glob("data/chest_xray" + "/*/*/*.jpeg"), columns=["PATH"])
-    return df.assign(LABEL=df["PATH"].apply(lambda path_: path_.split("\\")[2].strip()))
+    return df.assign(LABEL=df["PATH"].apply(lambda path_: path_.split("/")[3].strip()))
 
 
 def balance_dataset(df_loaded: pd.DataFrame) -> pd.DataFrame:
@@ -233,4 +233,4 @@ if __name__ == "__main__":
 
     cm = evaluate_model(model, img_generators["TEST_GENERATOR"])
     plot_confusion_matrix(cm, img_generators["TEST_GENERATOR"])
-    plot_final_test_results(model=model, test_generator=img_generators["TEST_GENERATOR"], num_images=20)
+    plot_final_test_results(model=model, test_generator=img_generators["TEST_GENERATOR"], num_images=10)

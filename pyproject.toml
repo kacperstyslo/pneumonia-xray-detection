@@ -1,0 +1,104 @@
+[project]
+name = "pneumonia-xray-detection"
+version = "1.0.0"
+description = "Pneuumonia xray detection using deep learing."
+readme = "README.md"
+requires-python = "==3.12.4"
+dependencies = [
+    "boto3>=1.38.19",
+    "pandas>=2.2",
+    "sagemaker<3"
+]
+
+[dependency-groups]
+
+data_preperation = [
+    "pandas==2.2.2",
+    "numpy<=2.0.0"
+]
+
+ml = [
+    "keras==3.3.3",
+    "matplotlib==3.9.0",
+    "seaborn==0.13.2",
+    "scikit-learn==1.5.0",
+    "tensorflow==2.16.1"
+]
+
+lint = [
+    "mypy==1.10.0",
+    "ruff==0.4.9"
+]
+
+[tool.mypy]
+python_version = "3.11"
+follow_imports = "skip"
+ignore_missing_imports = true
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+no_implicit_reexport = true
+strict_equality = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "F",    # Pyflakes
+    "E",    # pydocstyle error
+    "W",    # pydocstyle warning
+    "D",    # pydocstyle
+    "C90",  # mccabe
+    "I",    # isort
+    "N",    # PEP8-naming
+    "YTT",  # flake8-2020
+    "ANN",  # flake8-annotations
+    "S",    # flake8-bandit
+    "FBT",  # flake8-boolean-trap
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "COM",  # flake8-commas
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "EM",   # flake8-errmsg
+    "EXE",  # flake8-executable
+    "FA",   # flake8-future-annotations
+    "ISC",  # flake8-implicit-str-concat
+    "ICN",  # flake8-import-conventions
+    "PIE",  # flake8-pie
+    "PT",   # flake8-pytest-style
+    "Q",    # flake8-quotes
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "TCH",  # flake8-type-checking
+    "ARG",  # flake8-unused-arguments
+    "ERA",  # eradicate
+    "PD",   # pandas-vet
+    "PL",   # pylint
+    "NPY",  # NumPy-specific rules
+    "PERF", # Perflint
+    "RUF",  # Ruff-specific rules
+]
+
+ignore = [
+    "D203",
+    "D213",
+    "TC003",   # Move standard library import into a type-checking block
+    "TC002",   # Move third-party import into a type-checking block
+    "S301",    # Read untrusted pickle files (models)
+    "COM812",  # Ignored due to formatting conflict
+    "ISC001",  # Ignored due to formatting conflict
+    "DTZ002",  # datetime.today() is not allowed, use `datetime.datetime.now(tz=)` instead (doesn't matter with strftime())
+    "PLR2004", # Ignored because raising errors if the value is used only once
+    "S608",
+    "TID252",  # Prefer absolute imports over relative imports from parent modules
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
