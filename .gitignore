@@ -163,6 +163,3 @@ cython_debug/
 
 # Training logs.
 logs/
-
-# Traing data.
-data/
